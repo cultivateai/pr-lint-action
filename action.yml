@@ -1,6 +1,6 @@
 name: "Pull Request Linter"
 description: "Ensures your PR title matches a given regex"
-author: "MorrisonCole"
+author: "MorrisonCole / Cultivate"
 branding:
   icon: "check"
   color: "green"
@@ -9,12 +9,22 @@ inputs:
     description: "Regex to ensure PR title matches. Allows anything by default."
     required: true
     default: ".*"
-  on-failed-regex-comment:
+  body-regex:
+    description: "Regex to ensure PR title matches. Allows anything by default."
+    required: true
+    default: ".*"
+  on-failed-title-comment:
     description:
-      "Comment for the bot to post on PRs that fail the regex. Use %regex% to
+      "Comment for the bot to post on PRs that fail the title regex. Use %regex% to
       reference regex."
     required: true
     default: "PR title failed to match %regex%."
+  on-failed-body-comment:
+    description:
+      "Comment for the bot to post on PRs that fail the body regex. Use %regex% to
+      reference regex."
+    required: true
+    default: "PR body failed to match %regex%."
 runs:
   using: "docker"
   image: "Dockerfile"

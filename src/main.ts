@@ -11,22 +11,40 @@ async function run(): Promise<void> {
   const pr = githubContext.issue;
 
   const titleRegex = new RegExp(core.getInput("title-regex"));
+  const bodyRegex = new RegExp(core.getInput("body-regex"));
   const title: string = githubContext.payload.pull_request?.title ?? "";
+  const body: string = githubContext.payload.pull_request?.body ?? "";
 
-  const onFailedRegexComment = core
-    .getInput("on-failed-regex-comment")
+  const onFailedTitleRegexComment = core
+    .getInput("on-failed-title-comment")
+    .replace("%regex%", titleRegex.source);
+
+  const onFailedBodyRegexComment = core
+    .getInput("on-failed-body-comment")
     .replace("%regex%", titleRegex.source);
 
   core.debug(`Title Regex: ${titleRegex}`);
   core.debug(`Title: ${title}`);
+  core.debug(`body Regex: ${bodyRegex}`);
+  core.debug(`body: ${body}`);
 
   const titleMatchesRegex: boolean = titleRegex.test(title);
-  if (!titleMatchesRegex) {
+  const bodyMatchesRegex: boolean = bodyRegex.test(body);
+
+  if (!titleMatchesRegex || !bodyMatchesRegex) {
+    let errmsg: string = "";
+    if (!titleMatchesRegex) {
+      errmsg += onFailedTitleRegexComment + "\n"
+    }
+    if (!bodyMatchesRegex) {
+      errmsg += onFailedBodyRegexComment + "\n"
+    }
+
     githubClient.pulls.createReview({
       owner: pr.owner,
       repo: pr.repo,
       pull_number: pr.number,
-      body: onFailedRegexComment,
+      body: errmsg,
       event: "REQUEST_CHANGES",
     });
   } else {
@@ -49,6 +67,7 @@ async function run(): Promise<void> {
     });
   }
 }
+
 
 run().catch((error) => {
   core.setFailed(error);

@@ -1,4 +1,4 @@
-# Pull Request Linter [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+# Pull Request Linter
 
 A GitHub Action to ensure that your PR title matches a given regex.
 
@@ -25,12 +25,18 @@ jobs:
       - uses: morrisoncole/pr-lint-action@v1.1.1
         with:
           title-regex: "#EX-[0-9]+"
-          on-failed-regex-comment:
+          on-failed-title-comment:
             "This is just an example. Failed regex: `%regex%`!"
+          body-regex: "foo"
+          on-failed-body-comment: "The body must contain foo"
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
 ```
 
 ## Changelog
+
+### v1.2.1
+
+- Add support for body checks
 
 ### v1.1.1
 
