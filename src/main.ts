@@ -22,7 +22,7 @@ async function run(): Promise<void> {
     }
   }
 
-  console.log("Body tests", core.getInput("title"))
+  console.log("Body tests", core.getInput("body"))
   for (let item of JSON.parse(core.getInput("body"))) {
     console.log(item)
     let rg = new RegExp(item.regex)
