@@ -7,39 +7,27 @@ async function run(): Promise<void> {
   const githubContext = github.context;
   const githubToken = core.getInput("repo-token");
   const githubClient = new GitHub(githubToken);
-
   const pr = githubContext.issue;
-
-  const titleRegex = new RegExp(core.getInput("title-regex"));
-  const bodyRegex = new RegExp(core.getInput("body-regex"));
   const title: string = githubContext.payload.pull_request?.title ?? "";
   const body: string = githubContext.payload.pull_request?.body ?? "";
 
-  const onFailedTitleRegexComment = core
-    .getInput("on-failed-title-comment")
-    .replace("%regex%", titleRegex.source);
+  let errmsg: string = "";
 
-  const onFailedBodyRegexComment = core
-    .getInput("on-failed-body-comment")
-    .replace("%regex%", titleRegex.source);
-
-  core.debug(`Title Regex: ${titleRegex}`);
-  core.debug(`Title: ${title}`);
-  core.debug(`body Regex: ${bodyRegex}`);
-  core.debug(`body: ${body}`);
-
-  const titleMatchesRegex: boolean = titleRegex.test(title);
-  const bodyMatchesRegex: boolean = bodyRegex.test(body);
-
-  if (!titleMatchesRegex || !bodyMatchesRegex) {
-    let errmsg: string = "";
-    if (!titleMatchesRegex) {
-      errmsg += onFailedTitleRegexComment + "\n"
+  for (let item of JSON.parse(core.getInput("title"))) {
+    let rg = new RegExp(item.regex)
+    if (! rg.test(title)) {
+      errmsg += "- " + item.comment + "\n"
     }
-    if (!bodyMatchesRegex) {
-      errmsg += onFailedBodyRegexComment + "\n"
-    }
+  }
 
+  for (let item of JSON.parse(core.getInput("body"))) {
+    let rg = new RegExp(item.regex)
+    if (! rg.test(body)) {
+      errmsg += "- " + item.comment + "\n"
+    }
+  }
+
+  if (errmsg != "") {
     githubClient.pulls.createReview({
       owner: pr.owner,
       repo: pr.repo,

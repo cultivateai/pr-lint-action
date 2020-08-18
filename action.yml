@@ -5,26 +5,14 @@ branding:
   icon: "check"
   color: "green"
 inputs:
-  title-regex:
-    description: "Regex to ensure PR title matches. Allows anything by default."
+  title:
+    description: 'JSON list of regexes and error messages. Example: [{"regex": "foo", "comment": "Title must contain foo"}]'
     required: true
-    default: ".*"
-  body-regex:
-    description: "Regex to ensure PR title matches. Allows anything by default."
+    default: "[]"
+  body:
+    description: 'JSON list of regexes and error messages. Example: [{"regex": "foo", "comment": "Body must contain foo"}]'
     required: true
-    default: ".*"
-  on-failed-title-comment:
-    description:
-      "Comment for the bot to post on PRs that fail the title regex. Use %regex% to
-      reference regex."
-    required: true
-    default: "PR title failed to match %regex%."
-  on-failed-body-comment:
-    description:
-      "Comment for the bot to post on PRs that fail the body regex. Use %regex% to
-      reference regex."
-    required: true
-    default: "PR body failed to match %regex%."
+    default: "[]"
 runs:
   using: "docker"
   image: "Dockerfile"
