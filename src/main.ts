@@ -13,14 +13,18 @@ async function run(): Promise<void> {
 
   let errmsg: string = "";
 
+  console.log("Title tests", core.getInput("title"))
   for (let item of JSON.parse(core.getInput("title"))) {
+    console.log(item)
     let rg = new RegExp(item.regex)
     if (! rg.test(title)) {
       errmsg += "- " + item.comment + "\n"
     }
   }
 
+  console.log("Body tests", core.getInput("title"))
   for (let item of JSON.parse(core.getInput("body"))) {
+    console.log(item)
     let rg = new RegExp(item.regex)
     if (! rg.test(body)) {
       errmsg += "- " + item.comment + "\n"
