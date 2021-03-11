@@ -8,26 +8,32 @@ async function run(): Promise<void> {
   const githubToken = core.getInput("repo-token");
   const githubClient = new GitHub(githubToken);
   const pr = githubContext.issue;
+  const creator = githubContext.payload.sender?.login ?? "";
   const title: string = githubContext.payload.pull_request?.title ?? "";
   const body: string = githubContext.payload.pull_request?.body ?? "";
 
+  const allowSkip = ['cultivatejenkins']
+
   let errmsg: string = "";
 
-  console.log("Title tests", core.getInput("title"))
-  for (let item of JSON.parse(core.getInput("title"))) {
-    console.log(item)
-    let rg = new RegExp(item.regex)
-    if (! rg.test(title)) {
-      errmsg += "- " + item.comment + "\n"
+  // allow specific users to skip check
+  if (!allowSkip.includes(creator)) {
+    console.log("Title tests", core.getInput("title"))
+    for (let item of JSON.parse(core.getInput("title"))) {
+      console.log(item)
+      let rg = new RegExp(item.regex)
+      if (! rg.test(title)) {
+        errmsg += "- " + item.comment + "\n"
+      }
     }
-  }
 
-  console.log("Body tests", core.getInput("body"))
-  for (let item of JSON.parse(core.getInput("body"))) {
-    console.log(item)
-    let rg = new RegExp(item.regex)
-    if (! rg.test(body)) {
-      errmsg += "- " + item.comment + "\n"
+    console.log("Body tests", core.getInput("body"))
+    for (let item of JSON.parse(core.getInput("body"))) {
+      console.log(item)
+      let rg = new RegExp(item.regex)
+      if (! rg.test(body)) {
+        errmsg += "- " + item.comment + "\n"
+      }
     }
   }
 
